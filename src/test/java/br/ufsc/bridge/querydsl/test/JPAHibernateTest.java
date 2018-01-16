@@ -3,6 +3,7 @@ package br.ufsc.bridge.querydsl.test;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -35,10 +36,12 @@ public abstract class JPAHibernateTest {
 			@Override
 			public void execute(Connection connection) throws SQLException {
 				try {
-					File script = new File(this.getClass().getResource("/data.sql").getFile());
+					File script = new File(this.getClass().getResource("/data.sql").toURI());
 					RunScript.execute(connection, new FileReader(script));
 				} catch (FileNotFoundException e) {
-					throw new RuntimeException("could not initialize with script");
+					throw new RuntimeException("could not initialize with script", e);
+				} catch (URISyntaxException e) {
+					throw new RuntimeException("invalid URI", e);
 				}
 			}
 		});
