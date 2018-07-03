@@ -36,7 +36,7 @@ public class QueryPagingTest extends JPAHibernateTest {
 
 		QueryWrapper<AuthorDto, JPAQuery<AuthorDto>> wrapper = QueryWrapper.wrap(query);
 
-		wrapper.addSort("nome", author.name);
+		wrapper.mapSort("nome", author.name);
 
 		List<OrderSpec> orders = new ArrayList<>();
 
