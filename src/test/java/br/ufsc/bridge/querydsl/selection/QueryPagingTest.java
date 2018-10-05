@@ -16,7 +16,9 @@ import br.ufsc.bridge.querydsl.test.JPAHibernateTest;
 import br.ufsc.bridge.querydsl.test.dtos.AuthorDto;
 import br.ufsc.bridge.querydsl.test.dtos.MAuthorDto;
 import br.ufsc.bridge.querydsl.test.entities.QAuthor;
+import br.ufsc.bridge.querydsl.test.entities.QBook;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 
 public class QueryPagingTest extends JPAHibernateTest {
@@ -59,6 +61,61 @@ public class QueryPagingTest extends JPAHibernateTest {
 		Assertions.assertThat(result.getTotal()).isEqualTo(2);
 		Assertions.assertThat(result.getContent().size()).isEqualTo(1);
 		Assertions.assertThat(result.getContent().get(0).getName()).isEqualTo("Stephen Hawking");
+	}
+
+	@Test
+	public void fetchPageWithCountTotal() {
+		QBook book = QBook.book;
+		QAuthor author = QAuthor.author;
+
+		JPAQuery<Tuple> query = new JPAQuery<>(em);
+		query.from(book);
+		query.select(book.author.id, book.author.name, book.count());
+		query.groupBy(book.author.id, book.author.name);
+
+		PageResult<Tuple> results = QueryWrapper.wrap(query)
+				.fetchPage(100L, new PageSpec(0, 10, null));
+
+		Assertions.assertThat(results.getTotal()).isEqualTo(100);
+		Assertions.assertThat(results.getContent().get(0).get(book.count())).isEqualTo(2);
+		Assertions.assertThat(results.getContent().get(1).get(book.count())).isEqualTo(2);
+	}
+
+	@Test
+	public void fetchPageWithCountQuery() {
+		QBook book = QBook.book;
+		QAuthor author = QAuthor.author;
+
+		JPAQuery<Tuple> query = new JPAQuery<>(em);
+		query.from(book);
+		query.select(book.author.id, book.author.name, book.count());
+		query.groupBy(book.author.id, book.author.name);
+
+		JPAQuery<?> countQuery = new JPAQuery<>(em);
+		countQuery.from(author);
+
+		PageResult<Tuple> results = QueryWrapper.wrap(query)
+				.fetchPage(countQuery, new PageSpec(0, 10, null));
+
+		Assertions.assertThat(results.getTotal()).isEqualTo(2);
+		Assertions.assertThat(results.getContent().get(0).get(book.count())).isEqualTo(2);
+		Assertions.assertThat(results.getContent().get(1).get(book.count())).isEqualTo(2);
+	}
+
+	@Test
+	public void fetchEmptyPage() {
+		QBook book = QBook.book;
+
+		JPAQuery<Tuple> query = new JPAQuery<>(em);
+		query.from(book);
+
+		PageSpec pageSpec = new PageSpec(0, 10, null);
+		PageResult<Tuple> results = QueryWrapper.wrap(query)
+				.fetchPage(0, pageSpec);
+
+		Assertions.assertThat(results.getTotal()).isEqualTo(0);
+		Assertions.assertThat(results.getPaginator()).isEqualTo(pageSpec);
+		Assertions.assertThat(results.getContent()).isEmpty();
 	}
 
 }

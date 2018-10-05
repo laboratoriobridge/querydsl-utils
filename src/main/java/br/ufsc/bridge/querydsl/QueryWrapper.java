@@ -40,21 +40,24 @@ public class QueryWrapper<R, Q extends Query<?> & Fetchable<R>> {
 		return this.fetchPage(this.query, pageSpec);
 	}
 
-	public PageResult<R> fetchPage(Q countQuery, PageSpec pageSpec) {
-		Long total = countQuery.fetchCount();
+	public PageResult<R> fetchPage(Fetchable<?> countQuery, PageSpec pageSpec) {
+		return this.fetchPage(countQuery.fetchCount(), pageSpec);
+	}
+
+	public PageResult<R> fetchPage(long totalElements, PageSpec pageSpec) {
 		List<R> content = Collections.emptyList();
 
-		if (total.equals(0L)) {
-			return new PageResult<>(content, pageSpec, total);
+		if (totalElements == 0) {
+			return new PageResult<>(content, pageSpec, totalElements);
 		}
 
-		if (pageSpec == null || total > pageSpec.getOffset()) {
+		if (pageSpec == null || totalElements > pageSpec.getOffset()) {
 			this.applyPageSpec(pageSpec);
 
 			content = this.query.fetch();
 		}
 
-		return new PageResult<>(content, pageSpec, total);
+		return new PageResult<>(content, pageSpec, totalElements);
 	}
 
 	private void applyPageSpec(PageSpec pageSpec) {
