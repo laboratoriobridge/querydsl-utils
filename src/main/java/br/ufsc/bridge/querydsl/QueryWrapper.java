@@ -26,8 +26,8 @@ public class QueryWrapper<R, Q extends Query<?> & Fetchable<R>> {
 		return new QueryWrapper<>(query);
 	}
 
-	public QueryWrapper<R, Q> mapSort(String sort, Expression<?> queryPath) {
-		this.sortMap.add(sort, queryPath);
+	public QueryWrapper<R, Q> mapSort(String sort, Expression<?>... sortExpressions) {
+		this.sortMap.add(sort, sortExpressions);
 		return this;
 	}
 

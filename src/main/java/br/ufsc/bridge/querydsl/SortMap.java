@@ -15,10 +15,10 @@ import com.querydsl.core.types.OrderSpecifier;
 
 public class SortMap {
 
-	private Map<String, Expression<?>> sortMap = new HashMap<>();
+	private Map<String, Expression<?>[]> sortMap = new HashMap<>();
 
-	public void add(String sort, Expression<?> queryPath) {
-		this.sortMap.put(sort, queryPath);
+	public void add(String sort, Expression<?>... sortExpressions) {
+		this.sortMap.put(sort, sortExpressions);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -26,9 +26,13 @@ public class SortMap {
 		List<OrderSpecifier<?>> orders = new LinkedList<>();
 		for (OrderSpec orderSpec : sortSpec.getOrders()) {
 			if (!this.sortMap.containsKey(orderSpec.getProperty())) {
-				throw new RuntimeException(String.format("Opção de sort (%s) não mapeada para esta consulta", orderSpec.getProperty()));
+				throw new RuntimeException(String.format("Sort option (%s) not mapped for this query", orderSpec.getProperty()));
 			}
-			orders.add(new OrderSpecifier(DirectionSpec.ASC.equals(orderSpec.getDirectionSpec()) ? Order.ASC : Order.DESC, this.sortMap.get(orderSpec.getProperty())));
+
+			Expression<?>[] sortExpressions = this.sortMap.get(orderSpec.getProperty());
+			for (Expression<?> exp : sortExpressions) {
+				orders.add(new OrderSpecifier(DirectionSpec.ASC.equals(orderSpec.getDirectionSpec()) ? Order.ASC : Order.DESC, exp));
+			}
 		}
 		return orders;
 	}
