@@ -22,4 +22,4 @@ deploy:
     script: bash .travis/deploy.sh
     on:
         branch: master
-        condition: $RELEASE = true
+        condition: env(RELEASE) = true
