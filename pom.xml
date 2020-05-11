@@ -6,11 +6,34 @@
   <version>1.1.1-SNAPSHOT</version>
 
   <name>QueryDSL Utils</name>
+  <description>
+    Utilities to build queries with QueryDsl
+  </description>
+  <url>https://github.com/laboratoriobridge/querydsl-utils</url>
 
-  <organization>
-    <name>Laboratório Bridge</name>
-    <url>https://bridge.ufsc.br/</url>
-  </organization>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Laboratório Bridge</name>
+      <email>maven@bridge.ufsc.br</email>
+      <organization>Laboratório Bridge</organization>
+      <organizationUrl>https://bridge.ufsc.br/</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git@github.com:laboratoriobridge/querydsl-utils.git</connection>
+    <url>scm:git:git@github.com:laboratoriobridge/querydsl-utils.git</url>
+    <developerConnection>scm:git:git@github.com:laboratoriobridge/querydsl-utils.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,7 +47,7 @@
     <dependency>
       <groupId>br.ufsc.bridge</groupId>
       <artifactId>metafy</artifactId>
-      <version>0.0.11</version>
+      <version>0.2.0</version>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
@@ -78,41 +101,65 @@
       <artifactId>querydsl-jpa</artifactId>
       <classifier>apt</classifier>
       <version>${querydsl.version}</version>
-      <scope>provided</scope> <!-- Eclipse não gera de estiver como test -->
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.querydsl</groupId>
       <artifactId>querydsl-apt</artifactId>
       <version>${querydsl.version}</version>
-      <scope>provided</scope> <!-- Eclipse não gera de estiver como test -->
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
   <distributionManagement>
-    <repository>
-      <id>repo-bridge</id>
-      <name>Internal Releases</name>
-      <url>https://repositorio.bridge.ufsc.br/repository/releases/</url>
-    </repository>
     <snapshotRepository>
       <id>repo-bridge</id>
       <url>https://repositorio.bridge.ufsc.br/repository/snapshots/</url>
     </snapshotRepository>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <name>Sonatype Nexus release repository</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
   </distributionManagement>
 
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-
         <configuration>
             <useIncrementalCompilation>false</useIncrementalCompilation>
         </configuration>
       </plugin>
 
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
@@ -122,15 +169,43 @@
           <autoVersionSubmodules>true</autoVersionSubmodules>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.7</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
-  <scm>
-    <connection>scm:git:git@github.com:laboratoriobridge/querydsl-utils.git</connection>
-    <url>scm:git:git@github.com:laboratoriobridge/querydsl-utils.git</url>
-    <developerConnection>scm:git:git@github.com:laboratoriobridge/querydsl-utils.git</developerConnection>
-    <tag>HEAD</tag>
-  </scm>
-
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
