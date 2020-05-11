@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/laboratoriobridge/querydsl-utils.svg?branch=master)](https://travis-ci.org/laboratoriobridge/querydsl-utils)
+
 # QueryDSL Utils
 
 
