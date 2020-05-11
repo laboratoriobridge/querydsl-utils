@@ -1,1 +1,1 @@
-mvn --s ./settings.xml release:clean release:prepare release:perform -B -Prelease
+mvn --s .travis/settings.xml release:clean release:prepare release:perform -B -Prelease
