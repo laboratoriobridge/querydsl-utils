@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/laboratoriobridge/querydsl-utils.svg?branch=master)](https://travis-ci.org/laboratoriobridge/querydsl-utils)
+![Build Status](https://github.com/laboratoriobridge/querydsl-utils/actions/workflows/maven.yml/badge.svg)
 [![codecov](https://codecov.io/gh/laboratoriobridge/querydsl-utils/branch/master/graph/badge.svg)](https://codecov.io/gh/laboratoriobridge/querydsl-utils)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/br.ufsc.bridge/querydsl-utils/badge.svg)](https://maven-badges.herokuapp.com/maven-central/br.ufsc.bridge/querydsl-utils)
 
