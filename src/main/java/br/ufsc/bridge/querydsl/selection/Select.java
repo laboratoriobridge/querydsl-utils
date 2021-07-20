@@ -155,7 +155,9 @@ public class Select<T> implements SelectExpression<T>, FactoryExpression<T> {
 
 	@Override
 	public List<Expression<?>> getArgs() {
-		this.qbean = (FactoryExpressionBase<T>) this.createSelection();
+		if(qbean == null) {
+			this.qbean = (FactoryExpressionBase<T>) this.createSelection();
+		}
 		return this.qbean.getArgs();
 	}
 
